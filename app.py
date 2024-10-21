@@ -1,13 +1,19 @@
 import weave
 import streamlit as st
 import openai
+import os
 
 weave.init("wandb-designers/riddle-game")
 
-# Set your OpenAI API key
-# Replace 'YOUR_OPENAI_API_KEY' with your actual OpenAI API key
-# For security, it's better to use Streamlit's secrets management or environment variables
-openai.api_key = st.secrets["openai_api_key"]
+# Determine if we're running in a Streamlit Cloud environment
+is_streamlit_cloud = os.environ.get('STREAMLIT_RUNTIME') == 'true'
+
+if is_streamlit_cloud:
+    # Use Streamlit secrets for production
+    api_key = st.secrets["OPENAI_API_KEY"]
+else:
+    # Use environment variable for local development
+    api_key = os.getenv("OPENAI_API_KEY")
 
 # Function to generate a riddle using OpenAI's GPT
 def generate_riddle():
