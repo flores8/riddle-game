@@ -74,11 +74,13 @@ if not st.session_state['riddle']:
 st.write("### Riddle:")
 st.write(st.session_state['riddle'])
 
-# Input field for the user to submit their answer
-user_answer = st.text_input("Your Answer:")
+# Create a form for the user input and submission
+with st.form(key='riddle_form'):
+    user_answer = st.text_input("Your Answer:")
+    submit_button = st.form_submit_button("Submit Answer")
 
-# When the user clicks the "Submit Answer" button
-if st.button("Submit Answer"):
+# When the form is submitted (either by clicking the button or pressing Enter)
+if submit_button:
     if user_answer:
         # Check if the user's answer matches or is contained within the correct answer
         is_correct = user_answer.strip().lower() in st.session_state['answer']
