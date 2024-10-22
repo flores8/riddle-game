@@ -15,9 +15,6 @@ else:
 # Initialize the OpenAI client
 client = OpenAI(api_key=api_key)
 
-# After initializing the client
-st.write("OpenAI client initialized")
-
 # Function to generate a riddle using OpenAI's GPT
 def generate_riddle():
     st.write("Generating riddle...")
@@ -105,8 +102,7 @@ if st.session_state['feedback']:
     if "Correct" in st.session_state['feedback']:
         st.success(st.session_state['feedback'])
     elif "Incorrect" in st.session_state['feedback']:
-        st.error(st.session_state['feedback'])
-        st.write(st.session_state['answer'].capitalize())  # Show the answer after an incorrect guess
+        st.error(f"{st.session_state['feedback']} {st.session_state['answer'].capitalize()}")
     else:
         st.warning(st.session_state['feedback'])
 
