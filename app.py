@@ -2,6 +2,7 @@ import streamlit as st
 import os
 from openai import OpenAI
 import random
+import time
 
 # Determine if we're running in a Streamlit Cloud environment
 is_streamlit_cloud = os.environ.get('STREAMLIT_RUNTIME') == 'true'
@@ -17,16 +18,17 @@ else:
 client = OpenAI(api_key=api_key)
 
 # Function to generate a riddle using OpenAI's GPT
+@st.cache_data(ttl=0)
 def generate_riddle():
     st.write("Generating riddle...")
-    prompt = "Tell me a riddle."
+    timestamp = int(time.time())
+    prompt = f"Tell me a riddle. Timestamp: {timestamp}"
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
         max_tokens=60,
         n=1,
         temperature=0.7,
-        seed=random.randint(1, 1000000),  # Add this line
     )
     riddle = response.choices[0].message.content.strip()
     return riddle
