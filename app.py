@@ -20,7 +20,6 @@ client = OpenAI(api_key=api_key)
 # Function to generate a riddle using OpenAI's GPT
 @st.cache_data(ttl=0)
 def generate_riddle():
-    st.write("Generating riddle...")
     timestamp = int(time.time())
     random_word = random.choice(['mysterious', 'puzzling', 'enigmatic', 'perplexing', 'baffling'])
     prompt = f"Create a {random_word} riddle that's not commonly known. Be creative and unique. Timestamp: {timestamp}"
@@ -71,9 +70,10 @@ st.title("Riddle game time!")
 
 # Generate a new riddle if there isn't one already
 if not st.session_state['riddle']:
-    st.session_state['riddle'] = generate_riddle()
-    st.session_state['answer'] = get_riddle_answer(st.session_state['riddle'])
-    st.session_state['feedback'] = ''
+    with st.spinner("Generating riddle..."):
+        st.session_state['riddle'] = generate_riddle()
+        st.session_state['answer'] = get_riddle_answer(st.session_state['riddle'])
+        st.session_state['feedback'] = ''
 
 # Display the riddle to the user
 st.write("### Riddle:")
