@@ -1,6 +1,7 @@
 import streamlit as st
-from openai import OpenAI
 import os
+from openai import OpenAI
+
 
 # Determine if we're running in a Streamlit Cloud environment
 is_streamlit_cloud = os.environ.get('STREAMLIT_RUNTIME') == 'true'
