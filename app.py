@@ -85,7 +85,7 @@ if st.button("Submit Answer"):
         if is_correct:
             st.session_state['feedback'] = "Correct! Well done."
         else:
-            st.session_state['feedback'] = f"Incorrect. The correct answer is:"
+            st.session_state['feedback'] = f"Incorrect. The correct answer is: {st.session_state['answer'].capitalize()}"
         
         # Log the riddle game results
         log_riddle_game(
@@ -102,7 +102,7 @@ if st.session_state['feedback']:
     if "Correct" in st.session_state['feedback']:
         st.success(st.session_state['feedback'])
     elif "Incorrect" in st.session_state['feedback']:
-        st.error(f"{st.session_state['feedback']} {st.session_state['answer'].capitalize()}")
+        st.error(st.session_state['feedback'])
     else:
         st.warning(st.session_state['feedback'])
 
