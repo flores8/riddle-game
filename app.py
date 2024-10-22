@@ -1,6 +1,6 @@
 import weave
 import streamlit as st
-import openai
+from openai import OpenAI
 import os
 
 weave.init("wandb-designers/riddle-game")
@@ -15,39 +15,47 @@ else:
     # Use environment variable for local development
     api_key = os.getenv("OPENAI_API_KEY")
 
+# Initialize the OpenAI client
+client = OpenAI(api_key=api_key)
+
 # Function to generate a riddle using OpenAI's GPT
 def generate_riddle():
-    # Prompt for the AI
     prompt = "Tell me a riddle."
-    # Call the OpenAI API to get a response
-    response = openai.Completion.create(
-        engine="text-davinci-003",  # Using the GPT-3 model
-        prompt=prompt,
-        max_tokens=60,              # Limit the response tokens
-        n=1,                        # Number of responses to generate
-        stop=None,
-        temperature=0.7,            # Controls the randomness of the output
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=60,
+        n=1,
+        temperature=0.7,
     )
-    # Extract the riddle from the response
-    riddle = response.choices[0].text.strip()
+    riddle = response.choices[0].message.content.strip()
     return riddle
 
 # Function to get the answer to the riddle
 def get_riddle_answer(riddle):
-    # Prompt to ask for the answer to the riddle
     prompt = f"What is the answer to the riddle: {riddle}"
-    # Call the OpenAI API to get the answer
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}],
         max_tokens=30,
         n=1,
-        stop=None,
         temperature=0,
     )
-    # Extract the answer and convert it to lowercase for comparison
-    answer = response.choices[0].text.strip().lower()
+    answer = response.choices[0].message.content.strip().lower()
     return answer
+
+# Function to log the riddle game results using Weave
+@weave.op()
+def riddle_output(riddle, correct_answer, user_guess, is_correct):
+    """
+    Log the riddle game results using Weave.
+    """
+    weave.log({
+        "riddle": riddle,
+        "correct_answer": correct_answer,
+        "user_guess": user_guess,
+        "is_correct": is_correct
+    })
 
 # Initialize session state variables to keep track of riddle, answer, and feedback
 if 'riddle' not in st.session_state:
@@ -58,7 +66,7 @@ if 'feedback' not in st.session_state:
     st.session_state['feedback'] = ''
 
 # Set the title of the app
-st.title("AI-Based Trivia Quiz Master")
+st.title("Riddle game time!")
 
 # Generate a new riddle if there isn't one already
 if not st.session_state['riddle']:
@@ -77,10 +85,19 @@ user_answer = st.text_input("Your Answer:")
 if st.button("Submit Answer"):
     if user_answer:
         # Check if the user's answer matches or is contained within the correct answer
-        if user_answer.strip().lower() in st.session_state['answer']:
+        is_correct = user_answer.strip().lower() in st.session_state['answer']
+        if is_correct:
             st.session_state['feedback'] = "Correct! Well done."
         else:
             st.session_state['feedback'] = f"Incorrect. The correct answer was: {st.session_state['answer'].capitalize()}"
+        
+        # Log the riddle game results
+        log_riddle_game(
+            st.session_state['riddle'],
+            st.session_state['answer'],
+            user_answer.strip().lower(),
+            is_correct
+        )
     else:
         st.session_state['feedback'] = "Please enter an answer."
 
@@ -93,6 +110,9 @@ if st.session_state['feedback']:
     else:
         st.warning(st.session_state['feedback'])
 
+# Add a visual separator
+st.divider()
+
 # Provide an option to solve another riddle
 if st.button("Solve Another Riddle"):
     # Reset the session state to generate a new riddle
@@ -100,4 +120,4 @@ if st.button("Solve Another Riddle"):
     st.session_state['answer'] = ''
     st.session_state['feedback'] = ''
     # Rerun the app to update the state
-    st.experimental_rerun()
+    st.rerun()
