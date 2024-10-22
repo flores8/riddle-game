@@ -22,13 +22,14 @@ client = OpenAI(api_key=api_key)
 def generate_riddle():
     st.write("Generating riddle...")
     timestamp = int(time.time())
-    prompt = f"Tell me a riddle. Timestamp: {timestamp}"
+    random_word = random.choice(['mysterious', 'puzzling', 'enigmatic', 'perplexing', 'baffling'])
+    prompt = f"Create a {random_word} riddle that's not commonly known. Be creative and unique. Timestamp: {timestamp}"
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
-        max_tokens=60,
+        max_tokens=100,
         n=1,
-        temperature=0.7,
+        temperature=0.9,
     )
     riddle = response.choices[0].message.content.strip()
     return riddle
