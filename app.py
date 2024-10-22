@@ -65,6 +65,8 @@ if 'answer' not in st.session_state:
     st.session_state['answer'] = ''
 if 'feedback' not in st.session_state:
     st.session_state['feedback'] = ''
+if 'riddle_id' not in st.session_state:
+    st.session_state['riddle_id'] = 0
 
 # Set the title of the app
 st.title("Riddle game time!")
@@ -81,7 +83,7 @@ st.write(st.session_state['riddle'])
 
 # Create a form for the user input and submission
 with st.form(key='riddle_form'):
-    user_answer = st.text_input("Your Answer:")
+    user_answer = st.text_input("Your Answer:", key=f"user_input_{st.session_state['riddle_id']}")
     submit_button = st.form_submit_button("Submit Answer")
 
 # When the form is submitted (either by clicking the button or pressing Enter)
@@ -122,5 +124,6 @@ if st.button("Solve Another Riddle"):
     st.session_state['riddle'] = ''
     st.session_state['answer'] = ''
     st.session_state['feedback'] = ''
+    st.session_state['riddle_id'] += 1  # Increment the riddle_id
     # Rerun the app to update the state
     st.rerun()
