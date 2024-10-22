@@ -12,11 +12,18 @@ else:
     # Use environment variable for local development
     api_key = os.getenv("OPENAI_API_KEY")
 
+# After setting the api_key
+st.write(f"API key set: {'Yes' if api_key else 'No'}")
+
 # Initialize the OpenAI client
 client = OpenAI(api_key=api_key)
 
+# After initializing the client
+st.write("OpenAI client initialized")
+
 # Function to generate a riddle using OpenAI's GPT
 def generate_riddle():
+    st.write("Generating riddle...")
     prompt = "Tell me a riddle."
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
