@@ -1,9 +1,6 @@
-import weave
 import streamlit as st
 from openai import OpenAI
 import os
-
-weave.init("wandb-designers/riddle-game")
 
 # Determine if we're running in a Streamlit Cloud environment
 is_streamlit_cloud = os.environ.get('STREAMLIT_RUNTIME') == 'true'
@@ -44,18 +41,16 @@ def get_riddle_answer(riddle):
     answer = response.choices[0].message.content.strip().lower()
     return answer
 
-# Function to log the riddle game results using Weave
-@weave.op()
-def riddle_output(riddle, correct_answer, user_guess, is_correct):
+# Function to log the riddle game results
+def log_riddle_game(riddle, correct_answer, user_guess, is_correct):
     """
-    Log the riddle game results using Weave.
+    Log the riddle game results.
     """
-    weave.log({
-        "riddle": riddle,
-        "correct_answer": correct_answer,
-        "user_guess": user_guess,
-        "is_correct": is_correct
-    })
+    print(f"Riddle: {riddle}")
+    print(f"Correct Answer: {correct_answer}")
+    print(f"User Guess: {user_guess}")
+    print(f"Is Correct: {is_correct}")
+    print("---")
 
 # Initialize session state variables to keep track of riddle, answer, and feedback
 if 'riddle' not in st.session_state:
