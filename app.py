@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 from openai import OpenAI
+import random
 
 # Determine if we're running in a Streamlit Cloud environment
 is_streamlit_cloud = os.environ.get('STREAMLIT_RUNTIME') == 'true'
@@ -25,6 +26,7 @@ def generate_riddle():
         max_tokens=60,
         n=1,
         temperature=0.7,
+        seed=random.randint(1, 1000000),  # Add this line
     )
     riddle = response.choices[0].message.content.strip()
     return riddle
