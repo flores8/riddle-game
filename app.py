@@ -1,12 +1,6 @@
 import streamlit as st
 import os
-
-# Try to import OpenAI, and if it fails, provide instructions
-try:
-    from openai import OpenAI
-except ImportError:
-    st.error("The OpenAI package is not installed. Please install it using 'pip install openai'.")
-    st.stop()
+from openai import OpenAI
 
 # Determine if we're running in a Streamlit Cloud environment
 is_streamlit_cloud = os.environ.get('STREAMLIT_RUNTIME') == 'true'
